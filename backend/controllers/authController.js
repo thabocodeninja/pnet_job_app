@@ -89,7 +89,7 @@ exports.getUserProfile = async (req, res, next) => {
 
 exports.updateUserProfile = async (req, res, next) => {
     try {
-        const  { firstname, lastname,  phone, bio,location,skills,expirience, education } = req.body;
+        const  { firstname, lastname ,  phone, bio , location, skills , expirience, education } = req.body;
         const user = await User.findByIdAndUpdate(req.user.id, {
             firstname,
             lastname,
