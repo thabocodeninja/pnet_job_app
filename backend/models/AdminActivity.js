@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const adminActivitySchema = new mongoose.Schema({
+const adminActivitySchema = new mongoose.Schema(
 
     {
         admin: {
