@@ -67,7 +67,7 @@ res.status(201).json({
 }
 };
 
-exportsgetMyApplications = async (req, res, next) => {
+exports.getMyApplications = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -87,7 +87,7 @@ exportsgetMyApplications = async (req, res, next) => {
                 pagination: {
                     page,
                     limit,
-                    toal,
+                    total,
                     pages: Math.ceil(total / limit),
                 },
             }); 
@@ -95,3 +95,5 @@ exportsgetMyApplications = async (req, res, next) => {
         next(error);
     }
 }
+
+
