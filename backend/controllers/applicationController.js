@@ -96,4 +96,33 @@ exports.getMyApplications = async (req, res, next) => {
     }
 }
 
+exports.updateApplicationStatus = async (req, res, next) => {
+    try {
+        const {status, notes, rating } = req.body;
+        const application = await JobApplication.findByIdAndUpdate(
+            req.params.id,
+            {
+                status,
+                notes,
+                rating,
+                updatedBy: req.user._id,
+            updatedAt: Date.now(),
+        },
+        { new: true }
+    ).populate('applicant').populate('job');
 
+    if (!application) {
+        return res.status(404).json({
+            success: false,
+            message: 'Application not found',
+        });
+    }
+res.status(200).json({
+    success: true,
+    message: 'Application status updated successfully',
+    data: application,  
+});
+} catch (error) {
+    next(error);
+}
+}
