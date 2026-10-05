@@ -126,3 +126,75 @@ res.status(200).json({
     next(error);
 }
 }
+
+
+exports.saveJob = async (req, res, next) => {
+    try {
+        const { jobId } = req.params;
+
+        const job = await Job.findById(jobId);
+        if(!job) {
+            return res.status(404).json({
+                success: false,
+                message: 'Job not found',
+            });
+        }
+
+        const user = await User.findById(req.user._id);
+        const isAlreadySaved = user.savedJobs.includes(jobId);
+
+        if (isAlreadySaved) {
+            await User.findByIdAndUpdate(req.user._id, {
+                $pull: { savedJobs: jobId },
+            });
+            return res.status(200).json({
+                success: true,
+                message: 'Job removed from saved jobs',
+            });
+        }
+        await User.findByIdAndUpdate(req.user._id, {
+            $push: { savedJobs: jobId },
+     });
+
+    } catch (error) {
+        next(error);
+    }
+
+}
+
+//get saved jobs
+exports.getSavedJobs = async (req, res, next) => {
+try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+
+    const user = await User.findById(req.user._id).populate({
+        path: 'savedJobs',
+        options: {
+            skip,
+            limit,
+            sort: { postedDate: -1 },
+        },
+ } );
+
+
+ const total = user.savedJobs.length;
+
+ res.status(200).json({
+    success: true,
+    data: user.savedJobs,
+    pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.cell(total /limit),
+    },
+})
+    } catch (error){
+        next(error);
+}
+}
+
+
