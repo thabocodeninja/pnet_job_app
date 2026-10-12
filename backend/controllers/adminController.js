@@ -97,3 +97,35 @@ exports.manageUser = async (req, res, next) =>  {
         next(error);
     }
 }
+
+//get all jobs for a admin
+
+exports.getAllJobsAdmin = async (req, res, next) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+
+      const total = await Job.countDocuments();
+      const Jobs = await Job.find()
+      .populate('createdBy', 'firstname lastname')  
+      .skip(skip)
+        .limit(limit)
+        .sort({ postdDate: -1 });
+
+
+        res.status(200).json({
+            success: true,
+            data: jobs,
+            pagination: {
+                page,
+                limit,
+                total,
+                pages: Math.ceil(total / limit),
+            },
+        })
+    } catch (error) {
+        next(error);
+    }
+    }
